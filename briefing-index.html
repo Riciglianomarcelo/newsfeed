@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Marcelo's / 4Geeks Daily Briefing</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f8fafc;--card:#fff;--border:#e2e8f0;--text:#0f172a;--text2:#64748b;--text3:#94a3b8;--text4:#cbd5e1;--accent:#f97316;--accent2:#ea580c}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* Header */
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 20px;position:sticky;top:0;z-index:50;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.header-inner{max-width:720px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:19px;font-weight:700;line-height:1.2}
+.brand-m{background:linear-gradient(135deg,#f97316,#ea580c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.brand-slash{color:var(--text4)}
+.brand-sub{color:var(--text3);font-weight:400;font-size:15px}
+.meta-line{font-size:11px;color:var(--text3);margin-top:2px}
+.header-actions{display:flex;gap:8px}
+.btn-brief{background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #fbbf24;color:#92400e;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit}
+.btn-brief:disabled{opacity:.5;cursor:not-allowed}
+.btn-refresh{background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:14px}
+
+/* Tabs */
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--card);max-width:720px;margin:0 auto;padding:0 16px}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);padding:12px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* Content */
+.content{max-width:720px;margin:0 auto;padding:0 16px}
+
+/* Search */
+.search-wrap{padding:14px 0 6px}
+.search{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;font-family:inherit;box-shadow:inset 0 1px 2px rgba(0,0,0,.03)}
+
+/* Pills */
+.pills{display:flex;gap:6px;overflow-x:auto;padding:6px 0 14px;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{border-radius:20px;padding:5px 12px;cursor:pointer;white-space:nowrap;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--card);color:var(--text2);transition:all .15s}
+.pill.active{color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+
+/* Warning */
+.warning{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#92400e}
+.error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:20px;margin-bottom:14px;text-align:center}
+
+/* Loading */
+.loading{padding:32px 0}
+.loading-title{text-align:center;margin-bottom:16px}
+.feed-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--card);border-radius:8px;margin-bottom:4px;border:1px solid #f1f5f9}
+.feed-row.ok{background:#f0fdf4}
+.feed-row.failed{background:#fef2f2}
+.spinner{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Category section */
+.cat-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:6px}
+.cat-header .emoji{font-size:15px}
+.cat-header .name{font-size:14px;font-weight:700}
+.cat-header .count{font-size:11px;color:var(--text4)}
+.cat-section{margin-bottom:24px}
+
+/* Article */
+.article{padding:12px 2px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.article.lead{background:var(--card);border-radius:12px;padding:16px 18px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.04);margin-bottom:6px;border-bottom:none}
+.article-body{flex:1;min-width:0}
+.article-meta{display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap}
+.cat-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}
+.article-source{font-size:11px;color:var(--text2)}
+.article-time{font-size:11px;color:var(--text3)}
+.article-title{color:var(--text);text-decoration:none;font-weight:500;font-size:14px;line-height:1.4;display:block}
+.article.lead .article-title{font-weight:600;font-size:16px}
+.article-title:hover{color:var(--accent)}
+.article-desc{font-size:13px;color:var(--text2);margin-top:5px;line-height:1.5}
+.article-actions{display:flex;flex-direction:column;gap:2px;flex-shrink:0;margin-top:2px}
+.btn-save,.btn-link{background:none;border:none;cursor:pointer;font-size:18px;padding:2px 4px;color:var(--text4);line-height:1}
+.btn-save.saved{color:#f59e0b}
+.btn-link{font-size:12px}
+.btn-link.copied{color:#16a34a}
+
+/* AI Brief */
+.brief-section{margin-bottom:20px}
+.brief-label{font-size:12px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.brief-line{height:1px;flex:1;background:linear-gradient(90deg,#fbbf24,transparent)}
+.brief-line.r{background:linear-gradient(270deg,#fbbf24,transparent)}
+.brief-card{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px 16px;margin-bottom:8px}
+.brief-topic{font-weight:600;font-size:15px;margin-bottom:3px}
+.brief-why{font-size:13px;color:var(--text2);line-height:1.5}
+.brief-sources{font-size:11px;color:var(--text3);margin-top:5px}
+.cross-label{font-size:12px;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.cross-card{background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.cross-topic{font-size:13px;font-weight:600;color:#6d28d9;margin-bottom:3px}
+.cross-contrast{font-size:12px;color:var(--text2);line-height:1.45}
+
+/* Archive */
+.arch-dates{display:flex;gap:6px;overflow-x:auto;padding:0 0 14px;scrollbar-width:none}
+.arch-dates::-webkit-scrollbar{display:none}
+.arch-btn{border-radius:8px;padding:8px 14px;cursor:pointer;white-space:nowrap;font-size:12px;font-weight:500;background:var(--card);border:1px solid var(--border);color:var(--text2);font-family:inherit}
+.arch-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* Saved */
+.clear-btn{background:none;border:1px solid #fecaca;color:#dc2626;font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit}
+
+/* Empty */
+.empty{text-align:center;padding:48px 0;color:var(--text3);font-size:14px}
+.empty-icon{font-size:28px;margin-bottom:8px}
+
+.footer{text-align:center;padding:20px 0 32px;color:var(--text4);font-size:11px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <div class="brand">
+        <span class="brand-m">Marcelo's</span><span class="brand-slash"> / </span><span>4Geeks</span>
+        <span class="brand-sub"> Daily Briefing</span>
+      </div>
+      <div class="meta-line" id="metaLine">Loading…</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-brief" id="btnBrief" disabled onclick="runBrief()">✨ AI Brief</button>
+      <button class="btn-refresh" id="btnRefresh" onclick="loadNews(true)">↻</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabs" id="tabsBar">
+  <button class="tab active" data-tab="today" onclick="switchTab('today')">☀️ Today</button>
+  <button class="tab" data-tab="archive" onclick="switchTab('archive')">📅 Archive</button>
+  <button class="tab" data-tab="saved" onclick="switchTab('saved')">★ Saved (<span id="savedCount">0</span>)</button>
+</div>
+
+<div class="content">
+  <div class="search-wrap">
+    <input class="search" type="text" placeholder="Search articles, topics, sources…" oninput="applyFilters()" id="searchInput">
+  </div>
+  <div class="pills" id="pillsBar"></div>
+  <div id="mainContent"></div>
+  <div class="footer">Marcelo's / 4Geeks Daily Briefing · Powered by RSS + Claude AI · Built with n8n</div>
+</div>
+
+<script>
+// ═══ STATE ═══
+let articles = [];
+let feedStatus = {};
+let savedArticles = JSON.parse(localStorage.getItem("nf-saved") || "[]");
+let archiveIndex = JSON.parse(localStorage.getItem("nf-arch-idx") || "[]");
+let archiveData = {};
+let activeTab = "today";
+let activeCategory = "all";
+let analysis = null;
+let feeds = [];
+
+const CATEGORIES = [
+  { id: "all", label: "All", emoji: "📰", color: "#475569" },
+  { id: "politics", label: "Politics", emoji: "🏛️", color: "#dc2626" },
+  { id: "latam", label: "Latin America", emoji: "🌍", color: "#16a34a" },
+  { id: "tech", label: "Tech", emoji: "💻", color: "#2563eb" },
+  { id: "sports", label: "Sports", emoji: "⚽", color: "#d97706" },
+  { id: "markets", label: "Markets", emoji: "💰", color: "#7c3aed" },
+];
+
+// ═══ INIT ═══
+updateSavedCount();
+renderPills();
+loadNews(false);
+
+// ═══ DATA ═══
+async function loadNews(forceRefresh) {
+  const main = document.getElementById("mainContent");
+  main.innerHTML = renderLoading();
+  document.getElementById("btnBrief").disabled = true;
+  document.getElementById("btnRefresh").disabled = true;
+
+  try {
+    const url = "/api/news" + (forceRefresh ? "?refresh=true" : "");
+    const res = await fetch(url);
+    const data = await res.json();
+
+    articles = data.articles || [];
+    feedStatus = data.status || {};
+
+    const okCount = Object.values(feedStatus).filter(s => s === "ok").length;
+    const time = new Date(data.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    document.getElementById("metaLine").textContent = `Updated ${time} · ${okCount}/${data.feedCount} sources${data.cached ? " (cached)" : ""}`;
+
+    // Archive today
+    if (articles.length > 0) {
+      const key = new Date().toISOString().split("T")[0];
+      archiveData[key] = articles.slice(0, 35);
+      if (!archiveIndex.includes(key)) archiveIndex.unshift(key);
+      archiveIndex = archiveIndex.slice(0, 14);
+      localStorage.setItem("nf-arch-idx", JSON.stringify(archiveIndex));
+      localStorage.setItem("nf-day-" + key, JSON.stringify(articles.slice(0, 35)));
+    }
+
+    analysis = null;
+    document.getElementById("btnBrief").disabled = articles.length === 0;
+    render();
+  } catch (e) {
+    main.innerHTML = `<div class="error-box"><div style="font-size:24px;margin-bottom:8px">📡</div><div style="font-size:14px;color:#991b1b;font-weight:500">Could not fetch news</div><div style="font-size:12px;color:#b91c1c;margin-top:4px">${e.message} — tap ↻</div></div>`;
+  }
+
+  document.getElementById("btnRefresh").disabled = false;
+}
+
+async function runBrief() {
+  if (!articles.length) return;
+  const btn = document.getElementById("btnBrief");
+  btn.disabled = true;
+  btn.textContent = "Analyzing…";
+
+  const headlines = articles.slice(0, 25).map(a => `[${a.source} — ${a.category}] ${a.title}`).join("\n");
+
+  try {
+    const res = await fetch("/api/brief", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ headlines }),
+    });
+    analysis = await res.json();
+    if (analysis.error) { alert("AI Brief: " + analysis.error); analysis = null; }
+  } catch (e) {
+    alert("AI Brief failed: " + e.message);
+  }
+
+  btn.textContent = "✨ AI Brief";
+  btn.disabled = false;
+  render();
+}
+
+// ═══ SAVE / UNSAVE ═══
+function toggleSave(idx) {
+  const src = activeTab === "saved" ? savedArticles : activeTab === "archive" ? (archiveData[getArchiveDate()] || []) : articles;
+  const filtered = getFiltered(src);
+  const article = filtered[idx];
+  if (!article) return;
+
+  const exists = savedArticles.findIndex(a => a.title === article.title);
+  if (exists >= 0) {
+    savedArticles.splice(exists, 1);
+  } else {
+    savedArticles.unshift({ ...article, savedAt: new Date().toISOString() });
+  }
+  localStorage.setItem("nf-saved", JSON.stringify(savedArticles.slice(0, 200)));
+  updateSavedCount();
+  render();
+}
+
+function clearSaved() {
+  savedArticles = [];
+  localStorage.setItem("nf-saved", "[]");
+  updateSavedCount();
+  render();
+}
+
+function isSaved(article) {
+  return savedArticles.some(a => a.title === article.title);
+}
+
+function updateSavedCount() {
+  const el = document.getElementById("savedCount");
+  if (el) el.textContent = savedArticles.length;
+}
+
+function copyLink(url, btnId) {
+  navigator.clipboard?.writeText(url).catch(() => {});
+  const btn = document.getElementById(btnId);
+  if (btn) { btn.textContent = "✓"; btn.classList.add("copied"); setTimeout(() => { btn.textContent = "🔗"; btn.classList.remove("copied"); }, 1500); }
+}
+
+// ═══ TABS & FILTERS ═══
+function switchTab(tab) {
+  activeTab = tab;
+  activeCategory = "all";
+  document.getElementById("searchInput").value = "";
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+  renderPills();
+  render();
+
+  if (tab === "archive" && archiveIndex.length > 0) {
+    const date = archiveIndex[0];
+    loadArchive(date);
+  }
+}
+
+function setCategory(catId) {
+  activeCategory = activeCategory === catId ? "all" : catId;
+  renderPills();
+  render();
+}
+
+function applyFilters() { render(); }
+
+function getFiltered(src) {
+  const q = (document.getElementById("searchInput")?.value || "").toLowerCase();
+  return src.filter(a => {
+    if (activeCategory !== "all" && a.categoryId !== activeCategory) return false;
+    if (q) return (a.title || "").toLowerCase().includes(q) || (a.description || a.summary || "").toLowerCase().includes(q) || (a.source || "").toLowerCase().includes(q) || (a.category || "").toLowerCase().includes(q);
+    return true;
+  });
+}
+
+function getArchiveDate() {
+  const btns = document.querySelectorAll(".arch-btn.active");
+  return btns.length ? btns[0].dataset.date : (archiveIndex[0] || "");
+}
+
+function loadArchive(date) {
+  document.querySelectorAll(".arch-btn").forEach(b => b.classList.toggle("active", b.dataset.date === date));
+  const stored = localStorage.getItem("nf-day-" + date);
+  if (stored) archiveData[date] = JSON.parse(stored);
+  render();
+}
+
+// ═══ RENDER ═══
+function renderPills() {
+  const src = activeTab === "saved" ? savedArticles : activeTab === "archive" ? (archiveData[getArchiveDate()] || []) : articles;
+  const bar = document.getElementById("pillsBar");
+  bar.innerHTML = CATEGORIES.map(cat => {
+    const count = cat.id === "all" ? src.length : src.filter(a => a.categoryId === cat.id).length;
+    const active = activeCategory === cat.id;
+    return `<button class="pill${active ? " active" : ""}" style="${active ? `background:${cat.color};border-color:${cat.color};color:#fff;box-shadow:0 2px 8px ${cat.color}30` : ""}" onclick="setCategory('${cat.id}')">${cat.emoji} ${cat.label}${count > 0 ? " " + count : ""}</button>`;
+  }).join("");
+}
+
+function renderLoading() {
+  return `<div class="loading"><div class="loading-title"><div style="font-size:14px;color:var(--text2);font-weight:500">Fetching your news…</div></div>${CATEGORIES.slice(1).map(c => `<div class="feed-row"><span style="font-size:16px;width:24px;text-align:center">${c.emoji}</span><span style="flex:1;font-size:13px;font-weight:500">${c.label}</span><span class="spinner"></span></div>`).join("")}</div>`;
+}
+
+function renderArticle(a, idx, isLead) {
+  const saved = isSaved(a);
+  const linkId = `link-${idx}-${Date.now()}`;
+  return `<div class="article${isLead ? " lead" : ""}">
+    <div class="article-body">
+      <div class="article-meta">
+        <span class="cat-tag" style="color:${a.color};background:${a.color}0D;border:1px solid ${a.color}20">${a.emoji} ${a.category}</span>
+        <span class="article-source">${a.source}</span>
+        <span class="article-time">${a.hoursAgo != null ? (a.hoursAgo < 1 ? "just now" : a.hoursAgo < 24 ? a.hoursAgo + "h ago" : Math.round(a.hoursAgo/24) + "d ago") : ""}</span>
+      </div>
+      <a class="article-title" href="${a.url}" target="_blank" rel="noopener">${a.title}</a>
+      ${isLead && (a.description || a.summary) ? `<div class="article-desc">${(a.description || a.summary).substring(0, 250)}</div>` : ""}
+    </div>
+    <div class="article-actions">
+      <button class="btn-save${saved ? " saved" : ""}" onclick="toggleSave(${idx})">${saved ? "★" : "☆"}</button>
+      <button class="btn-link" id="${linkId}" onclick="copyLink('${(a.url||"").replace(/'/g,"\\'")}','${linkId}')">🔗</button>
+    </div>
+  </div>`;
+}
+
+function render() {
+  const main = document.getElementById("mainContent");
+
+  if (activeTab === "today") {
+    const filtered = getFiltered(articles);
+    if (articles.length === 0) { main.innerHTML = ""; return; }
+
+    // Warnings
+    const failedCats = CATEGORIES.slice(1).filter(c => feedStatus[c.id] === "failed");
+    let html = "";
+    if (failedCats.length > 0 && articles.length > 0) {
+      html += `<div class="warning">⚠️ Could not fetch: ${failedCats.map(c => c.label).join(", ")}. Showing ${articles.length} articles from other sources.</div>`;
+    }
+
+    // AI Brief
+    if (analysis?.top_stories?.length) {
+      html += `<div class="brief-section"><div class="brief-label"><span class="brief-line"></span>✨ AI Briefing<span class="brief-line r"></span></div>`;
+      analysis.top_stories.forEach(s => {
+        html += `<div class="brief-card"><div class="brief-topic">${s.topic}</div><div class="brief-why">${s.why_it_matters}</div><div class="brief-sources">Sources: ${(s.sources||[]).join(" · ")}</div></div>`;
+      });
+      html += `</div>`;
+    }
+    if (analysis?.cross_source?.length) {
+      html += `<div style="margin-bottom:20px"><div class="cross-label">🔗 Cross-Source Coverage</div>`;
+      analysis.cross_source.forEach(c => {
+        html += `<div class="cross-card"><div class="cross-topic">${c.topic}</div><div class="cross-contrast">${c.angle_contrast}</div></div>`;
+      });
+      html += `</div>`;
+    }
+
+    // Articles
+    if (activeCategory === "all") {
+      CATEGORIES.slice(1).forEach(cat => {
+        const ca = filtered.filter(a => a.categoryId === cat.id);
+        if (!ca.length) return;
+        html += `<div class="cat-section"><div class="cat-header" style="border-bottom:2px solid ${cat.color}15"><span class="emoji">${cat.emoji}</span><span class="name" style="color:${cat.color}">${cat.label}</span><span class="count">· ${ca.length} articles</span></div>`;
+        ca.forEach((a, i) => { html += renderArticle(a, filtered.indexOf(a), i === 0); });
+        html += `</div>`;
+      });
+    } else {
+      filtered.forEach((a, i) => { html += renderArticle(a, i, i === 0); });
+    }
+
+    if (filtered.length === 0 && articles.length > 0) {
+      html += `<div class="empty">No articles match your search.</div>`;
+    }
+    main.innerHTML = html;
+
+  } else if (activeTab === "archive") {
+    let html = "";
+    if (archiveIndex.length > 0) {
+      html += `<div class="arch-dates">${archiveIndex.map((d, i) => {
+        const label = new Date(d + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+        return `<button class="arch-btn${i === 0 ? " active" : ""}" data-date="${d}" onclick="loadArchive('${d}')">${label}</button>`;
+      }).join("")}</div>`;
+
+      const date = getArchiveDate() || archiveIndex[0];
+      const archArticles = getFiltered(archiveData[date] || []);
+      if (archArticles.length > 0) {
+        archArticles.forEach((a, i) => { html += renderArticle(a, i, i === 0); });
+      } else {
+        html += `<div class="empty">Tap a date to load that day's briefing.</div>`;
+      }
+    } else {
+      html += `<div class="empty">No archive yet — saves automatically each time you load news.</div>`;
+    }
+    main.innerHTML = html;
+
+  } else if (activeTab === "saved") {
+    const filtered = getFiltered(savedArticles);
+    let html = "";
+    if (savedArticles.length > 0) {
+      html += `<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="clear-btn" onclick="clearSaved()">Clear all</button></div>`;
+      filtered.forEach((a, i) => { html += renderArticle(a, i, false); });
+      if (filtered.length === 0) html += `<div class="empty">No saved articles match your search.</div>`;
+    } else {
+      html += `<div class="empty"><div class="empty-icon">☆</div>No saved articles yet. Tap ☆ on any article.</div>`;
+    }
+    main.innerHTML = html;
+  }
+
+  renderPills();
+}
+</script>
+</body>
+</html>
